@@ -1,6 +1,9 @@
 package com.example.satisfactionsurvey.ui
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -15,18 +18,35 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.satisfactionsurvey.R
+import kotlin.math.floor
 
 @Composable
 fun VoteScreen(
+    onAdminImageClicked: () -> Unit,
     onButtonClicked: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.admin_icon),
+            contentDescription = null,
+            modifier = Modifier
+                .size(60.dp)
+                .padding(top = 8.dp, end = 8.dp)
+                .align(Alignment.TopEnd)
+                .clickable { onAdminImageClicked.invoke() }
+        )
+    }
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -69,15 +89,21 @@ fun VoteButton(
     number: Int,
     modifier: Modifier = Modifier
 ) {
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp
+
+    val buttonSize = floor(screenWidth/12.5)
+    val buttonTextSize = floor(buttonSize/2)
+
     OutlinedButton(
         onClick = { onButtonClicked(number) },
-        modifier = Modifier.size(100.dp),
+        modifier = Modifier.size(buttonSize.dp),
         shape = CircleShape,
         contentPadding = PaddingValues(0.dp)
         ) {
         Text(
             text = number.toString(),
-            fontSize = 50.sp
+            fontSize = buttonTextSize.sp
             )
     }
 }
@@ -86,6 +112,7 @@ fun VoteButton(
 @Composable
 fun VoteScreenPreview() {
     VoteScreen(
+        onAdminImageClicked = {},
         onButtonClicked = { }
     )
 }

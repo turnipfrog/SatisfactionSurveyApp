@@ -2,7 +2,6 @@ package com.example.satisfactionsurvey
 
 import android.os.CountDownTimer
 import android.widget.Toast
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -25,17 +24,21 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.satisfactionsurvey.ui.AdminScreen
+import com.example.satisfactionsurvey.ui.AdminViewModel
 import com.example.satisfactionsurvey.ui.CommentScreen
+import com.example.satisfactionsurvey.ui.CredentialScreen
 import com.example.satisfactionsurvey.ui.ThankYouScreen
 import com.example.satisfactionsurvey.ui.VoteScreen
 import com.example.satisfactionsurvey.ui.VoteViewModel
 import java.time.LocalDate
 
-
 enum class SatisfactionSurveyScreen(@StringRes val title: Int) {
     Start(title = R.string.start_screen_appbar_string),
     Comment(title = R.string.comment_screen_title),
-    ThankYou(title = R.string.thank_you_screen_title)
+    ThankYou(title = R.string.thank_you_screen_title),
+    Credential(title = R.string.credential_screen),
+    Admin(title = R.string.admin_screen)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,9 +70,11 @@ fun SatisfactionSurveyAppBar(
 
 @Composable
 fun SatisfactionSurveyApp(
+    activity: MainActivity,
     navController: NavHostController = rememberNavController()
 ) {
     val viewModel: VoteViewModel = viewModel()
+    val adminViewModel: AdminViewModel = viewModel()
 
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreen = SatisfactionSurveyScreen.valueOf(
@@ -93,6 +98,7 @@ fun SatisfactionSurveyApp(
         ) {
             composable(route = SatisfactionSurveyScreen.Start.name) {
                 VoteScreen(
+                    onAdminImageClicked = { navController.navigate(SatisfactionSurveyScreen.Credential.name )},
                     onButtonClicked = {
                         viewModel.updateGrade(it)
                         navController.navigate(SatisfactionSurveyScreen.Comment.name)
@@ -101,21 +107,39 @@ fun SatisfactionSurveyApp(
             }
             composable(route = SatisfactionSurveyScreen.Comment.name) {
                 CommentScreen(
+                    voteViewModel = viewModel,
                     onConfirmClicked = {
                         viewModel.updateOptionalText(it)
                         viewModel.updateChoiceDate(LocalDate.now())
                         navController.navigate(SatisfactionSurveyScreen.ThankYou.name)
+                        viewModel.resetUserComment()
                         waitAndNavigateToStart(navController)
-//                        navController.popBackStack(SatisfactionSurveyScreen.Start.name, inclusive = false)
-//                        Toast.makeText(activity,
-//                            activity.getString(R.string.toast_confirm_message),
-//                            Toast.LENGTH_LONG).show()
                     },
                     onCancelClicked = { resetVoteAndNavigateToStart(viewModel, navController) }
                 )
             }
             composable(route = SatisfactionSurveyScreen.ThankYou.name) {
                 ThankYouScreen(R.drawable.sun)
+            }
+            composable(route = SatisfactionSurveyScreen.Credential.name) {
+                CredentialScreen(
+                    adminViewModel = adminViewModel,
+                    onDonePressed = {
+                        if (adminViewModel.validatePassword(it)) {
+                            navController.navigate(SatisfactionSurveyScreen.Admin.name)
+                        }
+                        else {
+                            Toast.makeText(activity,
+                                activity.getString(R.string.wrong_password),
+                                Toast.LENGTH_LONG).show()
+                            navController.popBackStack(SatisfactionSurveyScreen.Start.name, inclusive = false)
+                        }
+                        adminViewModel.resetTextField()
+                    }
+                )
+            }
+            composable(route = SatisfactionSurveyScreen.Admin.name) {
+                AdminScreen()
             }
         }
     }
@@ -126,6 +150,7 @@ private fun resetVoteAndNavigateToStart(
     navController: NavHostController
 ) {
     viewModel.resetVote()
+    viewModel.resetUserComment()
     navController.popBackStack(SatisfactionSurveyScreen.Start.name, inclusive = false)
 }
 

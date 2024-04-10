@@ -12,10 +12,6 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -31,11 +27,11 @@ import com.example.satisfactionsurvey.R
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun CommentScreen(
+    voteViewModel: VoteViewModel,
     onConfirmClicked: (String) -> Unit,
     onCancelClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var text by remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
 
     Column(
@@ -49,8 +45,8 @@ fun CommentScreen(
             modifier = modifier.padding(bottom = 20.dp)
         )
         TextField(
-            value = text,
-            onValueChange = { text = it },
+            value = voteViewModel.userComment,
+            onValueChange = { voteViewModel.updateUserComment(it) },
             label = { Text(stringResource(id = R.string.make_a_comment))},
             textStyle = LocalTextStyle.current.copy(fontSize = 28.sp),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
@@ -58,7 +54,7 @@ fun CommentScreen(
                 onDone = { keyboardController?.hide() }),
         )
             Button(
-                onClick = { onConfirmClicked(text) },
+                onClick = { onConfirmClicked(voteViewModel.userComment) },
                 modifier = Modifier
                     .padding(24.dp)
                     .size(width = 240.dp,height = 80.dp)
@@ -86,6 +82,7 @@ fun CommentScreen(
 @Composable
 fun CommentScreenPreview() {
     CommentScreen(
+        voteViewModel = VoteViewModel(),
         onCancelClicked = {},
         onConfirmClicked = {}
     )

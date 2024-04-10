@@ -1,12 +1,17 @@
 <resources>
-    <string name="app_name">SatisfactionSurvey</string>
+    <string name="app_name">Trivsel Lundsbjerg</string>
     <string name="start_screen_appbar_string">Trivsel</string>
     <string name="comment_screen_title">Kommentarer</string>
     <string name="thank_you_screen_title">Tak for dit svar</string>
+    <string name="credential_screen">Password krævet</string>
+    <string name="admin_screen">Administration</string>
     <string name="back_button">Tilbage</string>
     <string name="vote_question">Hvordan har din dag været?</string>
     <string name="you_may_comment">Valgfri kommentar</string>
     <string name="make_a_comment">Yderligere kommentarer.</string>
+    <string name="enter_password">Indtast password</string>
+    <string name="password">Password</string>
+    <string name="wrong_password">Forkert password!</string>
     <string name="confirm">Bekræft afsendelse</string>
     <string name="cancel">Annullér</string>
     <string name="toast_confirm_message">Dit svar er registreret</string>

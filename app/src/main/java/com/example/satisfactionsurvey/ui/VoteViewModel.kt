@@ -1,5 +1,8 @@
 package com.example.satisfactionsurvey.ui
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.satisfactionsurvey.model.VoteUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,6 +15,17 @@ class VoteViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(VoteUiState())
     val uiState: StateFlow<VoteUiState> = _uiState.asStateFlow()
 
+    var userComment by mutableStateOf("")
+        private set
+
+    fun updateUserComment(optionalText: String) {
+        userComment = optionalText
+    }
+
+    fun resetUserComment() {
+        userComment = ""
+    }
+
     fun updateGrade(grade: Int) {
         _uiState.update { currentState ->
             currentState.copy(
@@ -21,6 +35,7 @@ class VoteViewModel : ViewModel() {
     }
 
     fun updateOptionalText(optionalText: String) {
+
         _uiState.update { currentState ->
             currentState.copy(
                 optionalText = optionalText
