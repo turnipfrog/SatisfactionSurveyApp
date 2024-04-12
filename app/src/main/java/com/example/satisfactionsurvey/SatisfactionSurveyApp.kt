@@ -16,6 +16,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -25,12 +26,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.satisfactionsurvey.ui.AdminScreen
+import com.example.satisfactionsurvey.ui.AppViewModelProvider
 import com.example.satisfactionsurvey.ui.AuthenticationViewModel
 import com.example.satisfactionsurvey.ui.CommentScreen
 import com.example.satisfactionsurvey.ui.CredentialScreen
 import com.example.satisfactionsurvey.ui.ThankYouScreen
 import com.example.satisfactionsurvey.ui.VoteScreen
 import com.example.satisfactionsurvey.ui.VoteViewModel
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 enum class SatisfactionSurveyScreen(@StringRes val title: Int) {
@@ -71,10 +74,12 @@ fun SatisfactionSurveyAppBar(
 @Composable
 fun SatisfactionSurveyApp(
     activity: MainActivity,
+    viewModel: VoteViewModel = viewModel(factory = AppViewModelProvider.Factory),
     navController: NavHostController = rememberNavController()
 ) {
-    val viewModel: VoteViewModel = viewModel()
+    //val viewModel: VoteViewModel = viewModel()
     val authenticationViewModel: AuthenticationViewModel = viewModel()
+    val coroutineScope = rememberCoroutineScope()
 
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreen = SatisfactionSurveyScreen.valueOf(
@@ -112,7 +117,10 @@ fun SatisfactionSurveyApp(
                         viewModel.updateOptionalText(it)
                         viewModel.updateChoiceDate(LocalDate.now())
                         navController.navigate(SatisfactionSurveyScreen.ThankYou.name)
-                        viewModel.resetUserComment()
+                        coroutineScope.launch {
+                            viewModel.saveVote()
+                            viewModel.resetUserComment()
+                        }
                         waitAndNavigateToStart(navController)
                     },
                     onCancelClicked = { resetVoteAndNavigateToStart(viewModel, navController) }

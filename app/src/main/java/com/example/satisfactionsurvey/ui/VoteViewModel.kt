@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.example.satisfactionsurvey.data.Vote
 import com.example.satisfactionsurvey.data.VoteUiState
 import com.example.satisfactionsurvey.data.VotesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,7 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.time.LocalDate
 
-class VoteViewModel() : ViewModel() {
+public class VoteViewModel(private val votesRepository: VotesRepository) : ViewModel() {
     private val _uiState = MutableStateFlow(VoteUiState())
     val uiState: StateFlow<VoteUiState> = _uiState.asStateFlow()
 
@@ -54,5 +55,15 @@ class VoteViewModel() : ViewModel() {
 
     fun resetVote() {
         _uiState.value = VoteUiState()
+    }
+
+    suspend fun saveVote() {
+        val vote = Vote(
+            id= 0,
+            grade = _uiState.value.grade,
+            optionalText = _uiState.value.optionalText,
+            choiceDate = _uiState.value.choiceDate
+            )
+        votesRepository.insertVote(vote)
     }
 }

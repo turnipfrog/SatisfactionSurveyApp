@@ -1,7 +1,6 @@
 package com.example.satisfactionsurvey.data
 
 import kotlinx.coroutines.flow.Flow
-import java.time.LocalDate
 import java.util.Date
 
 class OfflineVotesRepository(private val voteDao: VoteDao) : VotesRepository {

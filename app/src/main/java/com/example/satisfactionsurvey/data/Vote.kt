@@ -11,6 +11,6 @@ data class Vote(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
     val grade: Int,
-    val optionalText: String,
+    val optionalText: String?,
     val choiceDate: Date
 )
