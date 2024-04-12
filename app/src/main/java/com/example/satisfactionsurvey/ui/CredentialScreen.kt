@@ -29,7 +29,7 @@ import com.example.satisfactionsurvey.R
 
 @Composable
 fun CredentialScreen(
-    adminViewModel: AdminViewModel,
+    authenticationViewModel: AuthenticationViewModel,
     onDonePressed: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -44,23 +44,23 @@ fun CredentialScreen(
             modifier = modifier.padding(bottom = 20.dp)
         )
         TextField(
-            value = adminViewModel.passwordAttempt,
-            onValueChange = { adminViewModel.updatePasswordAttempt(it) },
+            value = authenticationViewModel.passwordAttempt,
+            onValueChange = { authenticationViewModel.updatePasswordAttempt(it) },
             label = { Text(stringResource(id = R.string.password))},
             singleLine = true,
             placeholder = { Text("Password") },
-            visualTransformation = if (adminViewModel.passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            visualTransformation = if (authenticationViewModel.passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             textStyle = LocalTextStyle.current.copy(fontSize = 28.sp),
             trailingIcon = {
-                val image = if (adminViewModel.passwordVisible)
+                val image = if (authenticationViewModel.passwordVisible)
                     Icons.Filled.Visibility
                 else Icons.Filled.VisibilityOff
 
                 // Localized description for accessibility services
-                val description = if (adminViewModel.passwordVisible) "Hide password" else "Show password"
+                val description = if (authenticationViewModel.passwordVisible) "Hide password" else "Show password"
 
                 // Toggle button to hide or display password
-                IconButton(onClick = { adminViewModel.togglePasswordVisible() }) {
+                IconButton(onClick = { authenticationViewModel.togglePasswordVisible() }) {
                     Icon(imageVector = image, description)
                 }
             },
@@ -69,7 +69,7 @@ fun CredentialScreen(
                 keyboardType = KeyboardType.Password
             ),
             keyboardActions = KeyboardActions(
-                onDone = { onDonePressed(adminViewModel.passwordAttempt) }
+                onDone = { onDonePressed(authenticationViewModel.passwordAttempt) }
             )
         )
     }
@@ -79,7 +79,7 @@ fun CredentialScreen(
 @Composable
 fun CredentialScreenPreview() {
     CredentialScreen(
-        adminViewModel = AdminViewModel(),
+        authenticationViewModel = AuthenticationViewModel(),
         {}
     )
 }

@@ -6,8 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import org.springframework.security.crypto.bcrypt.BCrypt
 
-class AdminViewModel : ViewModel() {
-    val tempPassword = BCrypt.hashpw("rødspætte", BCrypt.gensalt())
+class AuthenticationViewModel : ViewModel() {
+    private val tempPassword = BCrypt.hashpw("rødspætte", BCrypt.gensalt())
 
     var passwordAttempt by mutableStateOf("")
         private set

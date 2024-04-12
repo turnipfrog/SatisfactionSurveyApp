@@ -25,7 +25,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.satisfactionsurvey.ui.AdminScreen
-import com.example.satisfactionsurvey.ui.AdminViewModel
+import com.example.satisfactionsurvey.ui.AuthenticationViewModel
 import com.example.satisfactionsurvey.ui.CommentScreen
 import com.example.satisfactionsurvey.ui.CredentialScreen
 import com.example.satisfactionsurvey.ui.ThankYouScreen
@@ -74,7 +74,7 @@ fun SatisfactionSurveyApp(
     navController: NavHostController = rememberNavController()
 ) {
     val viewModel: VoteViewModel = viewModel()
-    val adminViewModel: AdminViewModel = viewModel()
+    val authenticationViewModel: AuthenticationViewModel = viewModel()
 
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreen = SatisfactionSurveyScreen.valueOf(
@@ -123,9 +123,9 @@ fun SatisfactionSurveyApp(
             }
             composable(route = SatisfactionSurveyScreen.Credential.name) {
                 CredentialScreen(
-                    adminViewModel = adminViewModel,
+                    authenticationViewModel = authenticationViewModel,
                     onDonePressed = {
-                        if (adminViewModel.validatePassword(it)) {
+                        if (authenticationViewModel.validatePassword(it)) {
                             navController.navigate(SatisfactionSurveyScreen.Admin.name)
                         }
                         else {
@@ -134,7 +134,7 @@ fun SatisfactionSurveyApp(
                                 Toast.LENGTH_LONG).show()
                             navController.popBackStack(SatisfactionSurveyScreen.Start.name, inclusive = false)
                         }
-                        adminViewModel.resetTextField()
+                        authenticationViewModel.resetTextField()
                     }
                 )
             }

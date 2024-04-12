@@ -78,12 +78,12 @@ fun CommentScreen(
     }
 }
 
-@Preview
-@Composable
-fun CommentScreenPreview() {
-    CommentScreen(
-        voteViewModel = VoteViewModel(),
-        onCancelClicked = {},
-        onConfirmClicked = {}
-    )
-}
+//@Preview
+//@Composable
+//fun CommentScreenPreview() {
+//    CommentScreen(
+//        voteViewModel = VoteViewModel(),
+//        onCancelClicked = {},
+//        onConfirmClicked = {}
+//    )
+//}
