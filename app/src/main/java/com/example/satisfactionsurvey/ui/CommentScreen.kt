@@ -19,10 +19,8 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.satisfactionsurvey.R
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -31,7 +29,6 @@ fun CommentScreen(
     voteViewModel: VoteViewModel,
     onConfirmClicked: (String) -> Unit,
     onCancelClicked: () -> Unit,
-    viewModel: VoteViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
