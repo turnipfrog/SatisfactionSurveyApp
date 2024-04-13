@@ -2,13 +2,12 @@ package com.example.satisfactionsurvey.data
 
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
-import java.util.Date
 
 
 interface VotesRepository {
     fun getAllVotesStream() : Flow<List<Vote>>
 
-    fun getVotesByDateIntervalStream(startDate: Date, endDate: Date) : Flow<List<Vote>>
+    fun getVotesByDateIntervalStream(startDate: LocalDate, endDate: LocalDate) : Flow<List<Vote>>
 
     suspend fun insertVote(vote: Vote)
 

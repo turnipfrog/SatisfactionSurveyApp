@@ -16,6 +16,10 @@ object AppViewModelProvider {
         initializer {
             AuthenticationViewModel()
         }
+
+        initializer {
+            AdminViewModel(satisfactionSurveyApplication().container.votesRepository)
+        }
     }
 }
 

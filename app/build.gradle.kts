@@ -64,8 +64,7 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:$2.7.0")
     implementation("org.springframework.security:spring-security-crypto:5.7.2")
     implementation("commons-logging:commons-logging-api:1.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
+
     //Room
     implementation("androidx.room:room-runtime:${rootProject.extra["room_version"]}")
     ksp("androidx.room:room-compiler:${rootProject.extra["room_version"]}")

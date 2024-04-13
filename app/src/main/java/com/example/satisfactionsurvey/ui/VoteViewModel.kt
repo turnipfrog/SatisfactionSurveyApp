@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.satisfactionsurvey.data.Vote
-import com.example.satisfactionsurvey.data.VoteUiState
 import com.example.satisfactionsurvey.data.VotesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -48,7 +47,7 @@ public class VoteViewModel(private val votesRepository: VotesRepository) : ViewM
     fun updateChoiceDate(date: LocalDate) {
         _uiState.update { currentState ->
             currentState.copy(
-                choiceDate = java.sql.Date.valueOf(date.toString())
+                choiceDate = date
             )
         }
     }
@@ -59,7 +58,7 @@ public class VoteViewModel(private val votesRepository: VotesRepository) : ViewM
 
     suspend fun saveVote() {
         val vote = Vote(
-            id= 0,
+            id = 0,
             grade = _uiState.value.grade,
             optionalText = _uiState.value.optionalText,
             choiceDate = _uiState.value.choiceDate

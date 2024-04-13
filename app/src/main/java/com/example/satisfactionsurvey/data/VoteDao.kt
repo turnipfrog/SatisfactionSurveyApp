@@ -8,7 +8,7 @@ import androidx.room.Query
 import androidx.room.TypeConverters
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
-import java.util.Date
+import java.time.LocalDate
 
 @Dao
 @TypeConverters(Converters::class)
@@ -29,5 +29,5 @@ interface VoteDao {
     suspend fun deleteAll()
 
     @Query("SELECT * FROM votes WHERE choiceDate >= :startDate AND choiceDate <= :endDate")
-    fun getFromDateInterval(startDate: Date, endDate: Date): Flow<List<Vote>>
+    fun getFromDateInterval(startDate: LocalDate, endDate: LocalDate): Flow<List<Vote>>
 }

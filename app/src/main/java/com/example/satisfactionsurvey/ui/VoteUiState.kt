@@ -1,12 +1,11 @@
-package com.example.satisfactionsurvey.data
+package com.example.satisfactionsurvey.ui
 
 import android.os.Build
 import androidx.annotation.RequiresApi
 import java.time.LocalDate
-import java.util.Date
 
 data class VoteUiState @RequiresApi(Build.VERSION_CODES.O) constructor(
     val grade: Int = 0,
     val optionalText: String? = null,
-    val choiceDate: Date = java.sql.Date.valueOf(LocalDate.now().toString())
+    val choiceDate: LocalDate = LocalDate.now()
 )

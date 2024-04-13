@@ -26,6 +26,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.satisfactionsurvey.ui.AdminScreen
+import com.example.satisfactionsurvey.ui.AdminViewModel
 import com.example.satisfactionsurvey.ui.AppViewModelProvider
 import com.example.satisfactionsurvey.ui.AuthenticationViewModel
 import com.example.satisfactionsurvey.ui.CommentScreen
@@ -75,6 +76,7 @@ fun SatisfactionSurveyAppBar(
 fun SatisfactionSurveyApp(
     activity: MainActivity,
     viewModel: VoteViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    adminViewModel: AdminViewModel = viewModel(factory = AppViewModelProvider.Factory),
     navController: NavHostController = rememberNavController()
 ) {
     //val viewModel: VoteViewModel = viewModel()
@@ -147,7 +149,18 @@ fun SatisfactionSurveyApp(
                 )
             }
             composable(route = SatisfactionSurveyScreen.Admin.name) {
-                AdminScreen()
+                AdminScreen(
+                    fromDate = R.string.start_date_text,
+                    toDate = R.string.end_date_text,
+                    onStartDatePicked = {
+                        adminViewModel.updateStartDate(it)
+                        adminViewModel.updateAdminUiState()
+                    },
+                    onEndDatePicked = {
+                        adminViewModel.updateEndDate(it)
+                        adminViewModel.updateAdminUiState()
+                    }
+                )
             }
         }
     }

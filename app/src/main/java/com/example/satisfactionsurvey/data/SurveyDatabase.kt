@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [Vote::class], version = 1, exportSchema = false)
+@Database(entities = [Vote::class], version = 2, exportSchema = false)
 abstract class SurveyDatabase : RoomDatabase() {
     abstract fun voteDao() : VoteDao
 

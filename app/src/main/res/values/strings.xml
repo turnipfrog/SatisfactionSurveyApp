@@ -15,4 +15,10 @@
     <string name="confirm">Bekræft afsendelse</string>
     <string name="cancel">Annullér</string>
     <string name="toast_confirm_message">Dit svar er registreret</string>
+    <string name="avg_grade_all_time">Samlet gennemsnit: </string>
+    <string name="avg_grade_for_period">Gennemsnit i den valgte periode: </string>
+    <string name="start_date_text">Vælg startdato</string>
+    <string name="end_date_text">Vælg slutdato</string>
+    <string name="comment">Kommentar: %s</string>
+    <string name="no_vote_description">Der er ikke nogle stemmer gemt</string>
 </resources>

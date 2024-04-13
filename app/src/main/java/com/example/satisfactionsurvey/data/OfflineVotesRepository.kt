@@ -1,12 +1,12 @@
 package com.example.satisfactionsurvey.data
 
 import kotlinx.coroutines.flow.Flow
-import java.util.Date
+import java.time.LocalDate
 
 class OfflineVotesRepository(private val voteDao: VoteDao) : VotesRepository {
     override fun getAllVotesStream(): Flow<List<Vote>> = voteDao.getAllVotes()
 
-    override fun getVotesByDateIntervalStream(startDate: Date, endDate: Date) : Flow<List<Vote>> = voteDao.getFromDateInterval(startDate, endDate)
+    override fun getVotesByDateIntervalStream(startDate: LocalDate, endDate: LocalDate) : Flow<List<Vote>> = voteDao.getFromDateInterval(startDate, endDate)
 
     override suspend fun deleteAllVotes() = voteDao.deleteAll()
 
