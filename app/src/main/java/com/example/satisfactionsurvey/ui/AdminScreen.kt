@@ -1,5 +1,10 @@
 package com.example.satisfactionsurvey.ui
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -47,6 +52,9 @@ fun AdminScreen(
     @StringRes toDate: Int,
     onStartDatePicked: (LocalDate) -> Unit,
     onEndDatePicked: (LocalDate) -> Unit,
+    onDeleteClick: () -> Unit,
+    onBackClick: () -> Unit,
+    onExportClick: () -> Unit,
     adminViewModel: AdminViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier
 ) {
@@ -59,13 +67,24 @@ fun AdminScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            Buttons(
-                fromDate = fromDate,
-                toDate = toDate,
-                onStartDatePicked = onStartDatePicked,
-                onEndDatePicked = onEndDatePicked,
-                adminViewModel = adminViewModel
-            )
+            Row {
+                Buttons(
+                    fromDate = fromDate,
+                    toDate = toDate,
+                    onStartDatePicked = onStartDatePicked,
+                    onEndDatePicked = onEndDatePicked,
+                    adminViewModel = adminViewModel
+                )
+                AdminButtons(
+                    onDeleteButtonClick = onDeleteClick,
+                    onBackButtonClick = onBackClick,
+                    onExportButtonClick = onExportClick,
+                    deleteButtonText = R.string.delete_all,
+                    backButtonText = R.string.back_button,
+                    exportButtonText = R.string.export
+                )
+                FolderDestinationPicker()
+            }
             VoteBody(
                 voteList = adminUiState.voteList,
                 onVoteClick = {},
@@ -87,7 +106,10 @@ fun Buttons(
     modifier: Modifier = Modifier
 ) {
     Row {
-        Column() {
+        Column(
+            horizontalAlignment = Alignment.Start,
+            modifier = modifier.padding(end = 16.dp)
+        ) {
             Text(
                 text = stringResource(fromDate),
                 textAlign = TextAlign.Center
@@ -112,7 +134,9 @@ fun Buttons(
 
 @Composable
 private fun VoteBody(
-    voteList: List<Vote>, onVoteClick: (Int) -> Unit, modifier: Modifier = Modifier
+    voteList: List<Vote>,
+    onVoteClick: (Int) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -137,7 +161,9 @@ private fun VoteBody(
 
 @Composable
 private fun VoteList(
-    voteList: List<Vote>, onVoteClick: (Vote) -> Unit, modifier: Modifier = Modifier
+    voteList: List<Vote>,
+    onVoteClick: (Vote) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     LazyColumn(modifier = modifier) {
         items(items = voteList, key = { it.id }) { vote ->
@@ -151,7 +177,8 @@ private fun VoteList(
 
 @Composable
 private fun VoteItem(
-    vote: Vote, modifier: Modifier = Modifier
+    vote: Vote,
+    modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier,
@@ -261,10 +288,61 @@ private fun convertMillisToLocalDate(it: Long): LocalDate {
 }
 
 @Composable
-fun AdminButtons() {
-    Row {
-        // TODO: Button - Delete all data, CredentialScreen to confirm
-        // TODO: Button - Back to start screen
+fun AdminButtons(
+    onDeleteButtonClick: () -> Unit,
+    onBackButtonClick: () -> Unit,
+    onExportButtonClick: () -> Unit,
+    @StringRes deleteButtonText: Int,
+    @StringRes backButtonText: Int,
+    @StringRes exportButtonText: Int,
+    modifier: Modifier = Modifier
+) {
+    Row () {
+        Column(modifier = Modifier.padding(start = 80.dp)) {
+            Spacer(modifier = Modifier.padding(bottom = 22.dp))
+            Button(
+                onClick = onExportButtonClick
+            ) {
+                Text(text = stringResource(exportButtonText))
+            }
+        }
+        Column(modifier = Modifier.padding(start = 16.dp)) {
+            Spacer(modifier = Modifier.padding(bottom = 22.dp))
+            Button(
+                onClick = onDeleteButtonClick
+            ) {
+                Text(text = stringResource(deleteButtonText))
+
+            }
+        }
+        Column(modifier = Modifier.padding(start = 16.dp)) {
+            Spacer(modifier = Modifier.padding(bottom = 22.dp))
+            Button(
+                onClick = onBackButtonClick
+            ) {
+                Text(text = stringResource(backButtonText))
+            }
+        }
+    }
+}
+
+@Composable
+fun FolderDestinationPicker(){
+    val intent = Intent(Intent.ACTION_GET_CONTENT)
+    intent.type = "*text/csv*"
+    intent.addCategory(Intent.CATEGORY_OPENABLE)
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { activityResult ->
+        if (activityResult.resultCode == Activity.RESULT_OK) {
+            val uri: Uri? = activityResult.data?.data
+        }
+    }
+    Button(onClick = {
+        launcher.launch(intent)
+    }) {
+        Text(text = "Take a file")
     }
 }
 

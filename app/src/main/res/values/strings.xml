@@ -21,4 +21,10 @@
     <string name="end_date_text">Vælg slutdato</string>
     <string name="comment">Kommentar: %s</string>
     <string name="no_vote_description">Der er ikke nogle stemmer gemt</string>
+    <string name="back_to_start">Til start</string>
+    <string name="delete_all">Slet alt</string>
+    <string name="export">Eksportér</string>
+    <string name="confirm_delete_all">Bekræft sletning af databasen</string>
+    <string name="type_code_delete_all">Indtast kode for at rydde databasen</string>
+    <string name="csv_file_created">.csv fil oprettet for perioden</string>
 </resources>

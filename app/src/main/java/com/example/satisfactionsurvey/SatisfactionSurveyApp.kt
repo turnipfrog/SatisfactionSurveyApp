@@ -42,7 +42,8 @@ enum class SatisfactionSurveyScreen(@StringRes val title: Int) {
     Comment(title = R.string.comment_screen_title),
     ThankYou(title = R.string.thank_you_screen_title),
     Credential(title = R.string.credential_screen),
-    Admin(title = R.string.admin_screen)
+    Admin(title = R.string.admin_screen),
+    ConfirmDelete(title = R.string.confirm_delete_all)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -134,6 +135,7 @@ fun SatisfactionSurveyApp(
             composable(route = SatisfactionSurveyScreen.Credential.name) {
                 CredentialScreen(
                     authenticationViewModel = authenticationViewModel,
+                    screenText = R.string.enter_password,
                     onDonePressed = {
                         if (authenticationViewModel.validatePassword(it)) {
                             navController.navigate(SatisfactionSurveyScreen.Admin.name)
@@ -155,11 +157,45 @@ fun SatisfactionSurveyApp(
                     onStartDatePicked = {
                         adminViewModel.updateStartDate(it)
                         adminViewModel.updateAdminUiState()
+                        adminViewModel.updateVoteListFromInterval()
                     },
                     onEndDatePicked = {
                         adminViewModel.updateEndDate(it)
                         adminViewModel.updateAdminUiState()
+                        adminViewModel.updateVoteListFromInterval()
+                    },
+                    onExportClick = {
+                        adminViewModel.updateVoteListFromInterval()
+                        adminViewModel.writeCsvFile(adminViewModel.voteListFromInterval)
+                        Toast.makeText(activity,
+                            activity.getString(R.string.csv_file_created),
+                            Toast.LENGTH_LONG).show()
+                    },
+                    onDeleteClick = {
+                        navController.navigate(SatisfactionSurveyScreen.ConfirmDelete.name)
+                    },
+                    onBackClick = {
+                        navController.popBackStack(SatisfactionSurveyScreen.Start.name, inclusive = false)
                     }
+                )
+            }
+            composable(route = SatisfactionSurveyScreen.ConfirmDelete.name) {
+                CredentialScreen(
+                    authenticationViewModel = authenticationViewModel,
+                    onDonePressed = {
+                        if (authenticationViewModel.validatePassword(it)) {
+                            adminViewModel.deleteAllVotes()
+                            navController.navigate(SatisfactionSurveyScreen.Admin.name)
+                        }
+                        else {
+                            Toast.makeText(activity,
+                                activity.getString(R.string.wrong_password),
+                                Toast.LENGTH_LONG).show()
+                            navController.navigate(SatisfactionSurveyScreen.Admin.name)
+                        }
+                        authenticationViewModel.resetTextField()
+                    },
+                    screenText = R.string.type_code_delete_all
                 )
             }
         }

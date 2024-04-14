@@ -1,5 +1,6 @@
 package com.example.satisfactionsurvey.ui
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,6 +32,7 @@ import com.example.satisfactionsurvey.R
 fun CredentialScreen(
     authenticationViewModel: AuthenticationViewModel,
     onDonePressed: (String) -> Unit,
+    @StringRes screenText: Int,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -39,7 +41,7 @@ fun CredentialScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = stringResource(id = R.string.enter_password),
+            text = stringResource(screenText),
             fontSize = 40.sp,
             modifier = modifier.padding(bottom = 20.dp)
         )
@@ -80,6 +82,7 @@ fun CredentialScreen(
 fun CredentialScreenPreview() {
     CredentialScreen(
         authenticationViewModel = AuthenticationViewModel(),
-        {}
+        onDonePressed = {},
+        screenText = R.string.enter_password
     )
 }

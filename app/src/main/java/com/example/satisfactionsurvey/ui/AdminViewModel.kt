@@ -9,8 +9,12 @@ import com.example.satisfactionsurvey.data.Vote
 import com.example.satisfactionsurvey.data.VotesRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import java.io.FileOutputStream
+import java.io.OutputStream
 import java.time.LocalDate
 
 class AdminViewModel(private val votesRepository: VotesRepository) : ViewModel() {
@@ -19,6 +23,8 @@ class AdminViewModel(private val votesRepository: VotesRepository) : ViewModel()
 
     var endDate by mutableStateOf(LocalDate.now())
         private set
+
+    var voteListFromInterval: List<Vote> = listOf()
 
     var adminUiState: StateFlow<AdminUiState> =
         votesRepository.getVotesByDateIntervalStream(startDate, endDate).map { AdminUiState(it) }
@@ -30,89 +36,55 @@ class AdminViewModel(private val votesRepository: VotesRepository) : ViewModel()
 
     fun updateAdminUiState() {
         votesRepository.getVotesByDateIntervalStream(startDate, endDate).map { AdminUiState(it) }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-                initialValue = AdminUiState()
-            )
+    }
+
+    fun updateVoteListFromInterval() {
+        viewModelScope.launch {
+            voteListFromInterval = votesRepository.getVotesByDateIntervalStream(startDate, endDate).first()
+        }
+    }
+
+    fun deleteAllVotes() {
+        viewModelScope.launch {
+            votesRepository.deleteAllVotes()
+        }
     }
 
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L
     }
-//    var uiState by mutableStateOf(AdminUiState())
-//        private set
-//
-//
-//    var averageGrade by mutableStateOf(0.0)
-//        private set
-//
-    fun updateStartDate(date: LocalDate){
+
+    fun updateStartDate(date: LocalDate) {
         startDate = date
     }
 
-    fun updateEndDate(date: LocalDate){
+    fun updateEndDate(date: LocalDate) {
         endDate = date
     }
-//
-//    suspend fun updateUiState() {
-//
-//        uiState = AdminUiState(
-//            voteListFromInterval = listOf()/*getAllVotesFromInterval().toVoteDetailsList()*/,
-//            averageGrades = AverageGrades(2.0, 5.0)/*getAvgGrades()*/,
-//            startDate = startDate,
-//            endDate = endDate
-//        )
-//    }
-//
-//    suspend fun getAllVotesFromInterval(): List<Vote> =
-//        votesRepository.getVotesByDateIntervalStream(startDate, endDate).flattenToList()
-//
-//    suspend fun getAvgGrades(): AverageGrades {
-//        val averageGradeAllTime = averageUsingFold(getAllVotes())
-//        val averageGradeInterval = averageUsingFold(getAllVotesFromInterval())
-//
-//        Log.d("FINDMETAG", averageGradeAllTime.toString())
-//        Log.d("FINDMETAG2", averageGradeInterval.toString())
-//        return AverageGrades(
-//            averageAllTime = averageGradeAllTime,
-//            averageInterval = averageGradeInterval
-//        )
-//    }
-//
-//    suspend fun getAllVotes(): List<Vote> = votesRepository.getAllVotesStream().flattenToList()
-//
-//    @OptIn(ExperimentalCoroutinesApi::class)
-//    suspend fun <T> Flow<List<T>>.flattenToList() =
-//        flatMapConcat { it.asFlow() }.toList()
-//
-//    fun List<Vote>.toVoteDetailsList(): List<VoteDetails> {
-//        return this.map { VoteDetails(it.id, it.grade, it.optionalText, it.choiceDate) }
-//    }
-//
-//    private fun averageUsingFold(votes: List<Vote>): Double {
-//        val sum = votes.fold(0.0) { sum, item -> sum + item.grade}
-//        val average = sum / votes.size
-//        return average
-//    }
+
+    fun writeCsvFile(votes: List<Vote>) {
+        val fileName = "$startDate-to-$endDate.csv"
+        FileOutputStream(fileName).apply {
+            writeCsv(votes)
+        }
+    }
+
+    fun OutputStream.writeCsv(votes: List<Vote>) {
+        val avgGrade = averageGrade(votes)
+        val writer = bufferedWriter()
+        writer.write(""""Dato", "Vurdering", "Kommentar"""")
+        writer.newLine()
+        votes.forEach {
+            writer.write("${it.choiceDate},${it.grade},${it.optionalText}")
+        }
+        repeat(2) {writer.newLine() }
+        writer.write("Gennemsnitslig vurdering: $avgGrade")
+        writer.flush()
+    }
+
+    fun averageGrade(votes: List<Vote>): Double {
+        val sum = votes.fold(0.0) { acc, vote ->  acc + vote.grade }
+        return sum / votes.size
+    }
 }
-//
-//data class AdminUiState(
-//    val voteListFromInterval: List<VoteDetails> = listOf(),
-//    val averageGrades: AverageGrades = AverageGrades(),
-//    val startDate: LocalDate = LocalDate.of(2024, 4, 1),
-//    val endDate: LocalDate = LocalDate.now()
-//)
-//
-//data class VoteDetails(
-//    val id: Int = 0,
-//    val grade: Int = 0,
-//    val optionalText: String? = "",
-//    val choiceDate: LocalDate = LocalDate.of(0, 0, 1)
-//)
-//
-//data class AverageGrades(
-//    val averageAllTime: Double = 0.0,
-//    val averageInterval: Double = 0.0
-//)
 data class AdminUiState(val voteList: List<Vote> = listOf())
