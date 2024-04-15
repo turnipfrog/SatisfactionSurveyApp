@@ -75,7 +75,7 @@ fun AdminScreen(
                     fromDate = fromDate,
                     toDate = toDate,
                     onStartDatePicked = {
-                        adminViewModel.updateEndDate(it)
+                        adminViewModel.updateStartDate(it)
                         adminViewModel.updateVoteListFromInterval()
                         adminViewModel.updateAdminUiState()
                     },
