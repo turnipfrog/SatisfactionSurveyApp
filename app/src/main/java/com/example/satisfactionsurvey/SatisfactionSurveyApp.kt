@@ -15,7 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -157,18 +156,15 @@ fun SatisfactionSurveyApp(
                     toDate = R.string.end_date_text,
                     onExportClick = {
                         adminViewModel.updateVoteListFromInterval()
-                        adminViewModel.writeCsvFile(adminViewModel.voteListFromInterval)
-                        Toast.makeText(activity,
-                            activity.getString(R.string.csv_file_created),
-                            Toast.LENGTH_LONG).show()
+                        adminViewModel.writeCsvFile(
+                            votes = adminViewModel.voteListFromInterval,
+                            activity = activity
+                        )
                     },
                     onDeleteClick = {
                         navController.navigate(SatisfactionSurveyScreen.ConfirmDelete.name)
                     },
                     onBackClick = {
-                        Toast.makeText(activity,
-                            "list size = " + adminViewModel.voteListFromInterval.size,
-                            Toast.LENGTH_LONG).show()
                         navController.popBackStack(SatisfactionSurveyScreen.Start.name, inclusive = false)
                     }
                 )

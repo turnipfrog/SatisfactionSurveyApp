@@ -1,10 +1,5 @@
 package com.example.satisfactionsurvey.ui
 
-import android.app.Activity
-import android.content.Intent
-import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -42,8 +37,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.satisfactionsurvey.R
 import com.example.satisfactionsurvey.data.Vote
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.toList
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -94,7 +87,7 @@ fun AdminScreen(
                     backButtonText = R.string.back_button,
                     exportButtonText = R.string.export
                 )
-                FolderDestinationPicker()
+//                FolderDestinationPicker()
             }
             VoteBody(
                 voteList = adminUiState.voteList,
@@ -337,25 +330,25 @@ fun AdminButtons(
     }
 }
 
-@Composable
-fun FolderDestinationPicker(){
-    val intent = Intent(Intent.ACTION_GET_CONTENT)
-    intent.type = "*text/csv*"
-    intent.addCategory(Intent.CATEGORY_OPENABLE)
-
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { activityResult ->
-        if (activityResult.resultCode == Activity.RESULT_OK) {
-            val uri: Uri? = activityResult.data?.data
-        }
-    }
-    Button(onClick = {
-        launcher.launch(intent)
-    }) {
-        Text(text = "Take a file")
-    }
-}
+//@Composable
+//fun FolderDestinationPicker(){
+//    val intent = Intent(Intent.ACTION_GET_CONTENT)
+//    intent.type = "*text/csv*"
+//    intent.addCategory(Intent.CATEGORY_OPENABLE)
+//
+//    val launcher = rememberLauncherForActivityResult(
+//        contract = ActivityResultContracts.StartActivityForResult()
+//    ) { activityResult ->
+//        if (activityResult.resultCode == Activity.RESULT_OK) {
+//            val uri: Uri? = activityResult.data?.data
+//        }
+//    }
+//    Button(onClick = {
+//        launcher.launch(intent)
+//    }) {
+//        Text(text = "Take a file")
+//    }
+//}
 
 @Preview
 @Composable

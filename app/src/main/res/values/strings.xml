@@ -27,4 +27,5 @@
     <string name="confirm_delete_all">Bekræft sletning af databasen</string>
     <string name="type_code_delete_all">Indtast kode for at rydde databasen</string>
     <string name="csv_file_created">.csv fil oprettet for perioden</string>
+    <string name="csv_file_not_created">Eksporteringen mislykkedes</string>
 </resources>
