@@ -42,6 +42,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.satisfactionsurvey.R
 import com.example.satisfactionsurvey.data.Vote
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.toList
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -50,8 +52,8 @@ import java.time.ZoneId
 fun AdminScreen(
     @StringRes fromDate: Int,
     @StringRes toDate: Int,
-    onStartDatePicked: (LocalDate) -> Unit,
-    onEndDatePicked: (LocalDate) -> Unit,
+//    onStartDatePicked: (LocalDate) -> Unit,
+//    onEndDatePicked: (LocalDate) -> Unit,
     onDeleteClick: () -> Unit,
     onBackClick: () -> Unit,
     onExportClick: () -> Unit,
@@ -59,6 +61,7 @@ fun AdminScreen(
     modifier: Modifier = Modifier
 ) {
     val adminUiState by adminViewModel.adminUiState.collectAsState()
+
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -71,8 +74,16 @@ fun AdminScreen(
                 Buttons(
                     fromDate = fromDate,
                     toDate = toDate,
-                    onStartDatePicked = onStartDatePicked,
-                    onEndDatePicked = onEndDatePicked,
+                    onStartDatePicked = {
+                        adminViewModel.updateEndDate(it)
+                        adminViewModel.updateVoteListFromInterval()
+                        adminViewModel.updateAdminUiState()
+                    },
+                    onEndDatePicked = {
+                        adminViewModel.updateEndDate(it)
+                        adminViewModel.updateVoteListFromInterval()
+                        adminViewModel.updateAdminUiState()
+                    },
                     adminViewModel = adminViewModel
                 )
                 AdminButtons(

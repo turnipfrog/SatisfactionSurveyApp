@@ -1,5 +1,6 @@
 package com.example.satisfactionsurvey.ui
 
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -7,11 +8,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.satisfactionsurvey.data.Vote
 import com.example.satisfactionsurvey.data.VotesRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.FileOutputStream
 import java.io.OutputStream
@@ -25,17 +31,25 @@ class AdminViewModel(private val votesRepository: VotesRepository) : ViewModel()
         private set
 
     var voteListFromInterval: List<Vote> = listOf()
+        private set
 
-    var adminUiState: StateFlow<AdminUiState> =
-        votesRepository.getVotesByDateIntervalStream(startDate, endDate).map { AdminUiState(it) }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-                initialValue = AdminUiState()
-            )
+    private val _adminUiState = MutableStateFlow(AdminUiState())
+    val adminUiState = _adminUiState.asStateFlow()
+
+    init {
+        updateVoteListFromInterval()
+        updateAdminUiState()
+    }
 
     fun updateAdminUiState() {
-        votesRepository.getVotesByDateIntervalStream(startDate, endDate).map { AdminUiState(it) }
+        viewModelScope.launch {
+            val newList = votesRepository.getVotesByDateIntervalStream(startDate, endDate).map { AdminUiState(it) }.first().voteList
+            _adminUiState.update {
+                it.copy(
+                    voteList = newList
+                )
+            }
+        }
     }
 
     fun updateVoteListFromInterval() {
@@ -87,4 +101,4 @@ class AdminViewModel(private val votesRepository: VotesRepository) : ViewModel()
         return sum / votes.size
     }
 }
-data class AdminUiState(val voteList: List<Vote> = listOf())
+data class AdminUiState(var voteList: List<Vote> = listOf())
