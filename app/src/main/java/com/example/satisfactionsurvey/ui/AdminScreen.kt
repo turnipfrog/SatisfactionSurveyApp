@@ -45,11 +45,11 @@ import java.time.ZoneId
 fun AdminScreen(
     @StringRes fromDate: Int,
     @StringRes toDate: Int,
-//    onStartDatePicked: (LocalDate) -> Unit,
-//    onEndDatePicked: (LocalDate) -> Unit,
+    onStartDatePicked: (LocalDate) -> Unit,
+    onEndDatePicked: (LocalDate) -> Unit,
     onDeleteClick: () -> Unit,
     onBackClick: () -> Unit,
-    onExportClick: () -> Unit,
+    onExportClick: (List<Vote>) -> Unit,
     adminViewModel: AdminViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier
 ) {
@@ -68,11 +68,13 @@ fun AdminScreen(
                     fromDate = fromDate,
                     toDate = toDate,
                     onStartDatePicked = {
+                        onStartDatePicked(it)
                         adminViewModel.updateStartDate(it)
                         adminViewModel.updateVoteListFromInterval()
                         adminViewModel.updateAdminUiState()
                     },
                     onEndDatePicked = {
+                        onEndDatePicked(it)
                         adminViewModel.updateEndDate(it)
                         adminViewModel.updateVoteListFromInterval()
                         adminViewModel.updateAdminUiState()
@@ -82,12 +84,12 @@ fun AdminScreen(
                 AdminButtons(
                     onDeleteButtonClick = onDeleteClick,
                     onBackButtonClick = onBackClick,
-                    onExportButtonClick = onExportClick,
+                    onExportButtonClick = { onExportClick(it) },
                     deleteButtonText = R.string.delete_all,
                     backButtonText = R.string.back_button,
-                    exportButtonText = R.string.export
+                    exportButtonText = R.string.export,
+                    adminViewModel = adminViewModel
                 )
-//                FolderDestinationPicker()
             }
             VoteBody(
                 voteList = adminUiState.voteList,
@@ -295,17 +297,18 @@ private fun convertMillisToLocalDate(it: Long): LocalDate {
 fun AdminButtons(
     onDeleteButtonClick: () -> Unit,
     onBackButtonClick: () -> Unit,
-    onExportButtonClick: () -> Unit,
+    onExportButtonClick: (List<Vote>) -> Unit,
     @StringRes deleteButtonText: Int,
     @StringRes backButtonText: Int,
     @StringRes exportButtonText: Int,
+    adminViewModel: AdminViewModel,
     modifier: Modifier = Modifier
 ) {
     Row () {
         Column(modifier = Modifier.padding(start = 80.dp)) {
             Spacer(modifier = Modifier.padding(bottom = 22.dp))
             Button(
-                onClick = onExportButtonClick
+                onClick =  { onExportButtonClick(adminViewModel.adminUiState.value.voteList) }
             ) {
                 Text(text = stringResource(exportButtonText))
             }

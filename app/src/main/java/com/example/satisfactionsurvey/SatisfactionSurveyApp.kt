@@ -155,9 +155,8 @@ fun SatisfactionSurveyApp(
                     fromDate = R.string.start_date_text,
                     toDate = R.string.end_date_text,
                     onExportClick = {
-                        adminViewModel.updateVoteListFromInterval()
                         adminViewModel.writeCsvFile(
-                            votes = adminViewModel.voteListFromInterval,
+                            votes = it,
                             activity = activity
                         )
                     },
@@ -166,7 +165,9 @@ fun SatisfactionSurveyApp(
                     },
                     onBackClick = {
                         navController.popBackStack(SatisfactionSurveyScreen.Start.name, inclusive = false)
-                    }
+                    },
+                    onStartDatePicked = { adminViewModel.updateStartDate(it) },
+                    onEndDatePicked = { adminViewModel.updateEndDate(it) }
                 )
             }
             composable(route = SatisfactionSurveyScreen.ConfirmDelete.name) {

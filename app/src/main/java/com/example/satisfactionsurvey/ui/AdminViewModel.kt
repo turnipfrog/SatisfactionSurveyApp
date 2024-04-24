@@ -1,6 +1,7 @@
 package com.example.satisfactionsurvey.ui
 
 import android.os.Environment
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,10 +28,10 @@ class AdminViewModel(private val votesRepository: VotesRepository) : ViewModel()
     var startDate by mutableStateOf(LocalDate.of(2024, 4, 1))
         private set
 
-    var sdcard = Environment.getExternalStorageDirectory().absolutePath
-
     var endDate by mutableStateOf(LocalDate.now())
         private set
+
+    private var sdcard = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).absolutePath
 
     var voteListFromInterval: List<Vote> = listOf()
         private set
@@ -82,8 +83,10 @@ class AdminViewModel(private val votesRepository: VotesRepository) : ViewModel()
     }
 
     fun writeCsvFile(votes: List<Vote>, activity: MainActivity) {
-        val fileName = "$startDate-to-$endDate.csv"
-        val outputFile = sdcard + "/trivsel_csv/$fileName"
+        Log.d("STARTDATE", startDate.toString())
+        Log.d("ENDDATE", endDate.toString())
+        var fileName = "$startDate-to-$endDate.csv"
+        val outputFile = "$sdcard/trivsel_csv/$fileName"
         createFolderIfNotExist()
         try {
             FileOutputStream(outputFile).apply {
@@ -110,6 +113,7 @@ class AdminViewModel(private val votesRepository: VotesRepository) : ViewModel()
         writer.newLine()
         votes.forEach {
             writer.write("${it.choiceDate},${it.grade},${it.optionalText}")
+            writer.newLine()
         }
         repeat(2) {writer.newLine() }
         writer.write("Gennemsnitslig vurdering: $avgGrade")
